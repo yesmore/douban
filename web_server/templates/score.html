@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="static/assets/js/echarts.min.js"></script>
+    <title>豆瓣数据分析</title>
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="static/assets/img/favicon.png" rel="icon">
+    <link href="static/assets/img/favicon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/venobox/venobox.css" rel="stylesheet">
+    <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="static/assets/css/style.css" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: Mamba - v2.0.1
+    * Template URL: https://bootstrapmade.com/mamba-one-page-bootstrap-template-free/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header">
+    <div class="container">
+
+        <div class="logo float-left">
+            <h1 class="text-light"><a href="#"><span>数据分析</span></a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="temp.html"><img src="static/assets/img/logo.png" alt="" class="img-fluid"></a>-->
+        </div>
+
+        <nav class="nav-menu float-right d-none d-lg-block">
+            <ul>
+                <li class="active"><a href="/">总评</a></li>
+                <li><a href="/word">生成词云</a></li>
+                <li><a href="/movie">电影</a></li>
+                <li><a href="/book">图书</a></li>
+            </ul>
+        </nav><!-- .nav-menu -->
+
+    </div>
+</header><!-- End Header -->
+
+<!-- ======= Our Team Section ======= -->
+<section id="team" class="team">
+    <div class="container">
+
+        <div class="section-title">
+             <h2>总参评人数: {{score_num}} 万</h2>
+        </div>
+
+        <div class="flex">
+            <div id="myChat" style="width: 50%;height:450px;"></div>
+            <div id="bookChat" style="width: 50%;height:450px;"></div>
+        </div>
+
+        <!--   图表     -->
+        <script type="text/javascript">
+            var myChart = echarts.init(document.getElementById('myChat'));
+
+            // 指定图表的配置项和数据
+            var dataAxis =
+            {{ scores|tojson }}
+            var data =
+            {{ counts }}
+            var yMax = 50;
+            var dataShadow = [];
+
+            for (var i = 0; i < data.length; i++) {
+                dataShadow.push(yMax);
+            }
+
+            option = {
+                title: {
+                    text: '电影评分分布',
+                    subtext: '数据来自豆瓣',
+                    left: 'center',
+                    textStyle:{
+                        //文字颜色
+                        color:'#ccc',
+                        //字体风格,'normal','italic','oblique'
+                        fontStyle:'normal',
+                        //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                        fontWeight:'bold',
+                        //字体系列
+                        fontFamily:'sans-serif',
+                        //字体大小
+                　　　　 fontSize:28
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        dataView: {show: true, readOnly: false},
+                        magicType: {show: true, type: ['line', 'bar']},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                xAxis: {
+                    data: dataAxis,
+                    axisLabel: {
+                        inside: true,
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    z: 10
+                },
+                yAxis: {
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside'
+                    }
+                ],
+                series: [
+                    { // For shadow
+                        type: 'bar',
+                        name: '电影数',
+                        itemStyle: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        barGap: '-100%',
+                        barCategoryGap: '40%',
+                        data: dataShadow,
+                        animation: false
+                    },
+                    {
+                        type: 'bar',
+                        name: '评价人数',
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(
+                                0, 0, 0, 1,
+                                [
+                                    {offset: 0, color: '#83bff6'},
+                                    {offset: 0.5, color: '#188df0'},
+                                    {offset: 1, color: '#188df0'}
+                                ]
+                            )
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0, 0, 0, 1,
+                                    [
+                                        {offset: 0, color: '#2378f7'},
+                                        {offset: 0.7, color: '#2378f7'},
+                                        {offset: 1, color: '#83bff6'}
+                                    ]
+                                )
+                            }
+                        },
+                        data: data
+                    }
+                ]
+            };
+
+            // Enable data zoom when user click bar.
+            var zoomSize = 6;
+            myChart.on('click', function (params) {
+                console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)]);
+                myChart.dispatchAction({
+                    type: 'dataZoom',
+                    startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+                    endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+                });
+            });
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        </script>
+        <script type="text/javascript">
+            var chartDom = document.getElementById('bookChat');
+            var bookChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '图书评分分布',
+                    subtext: '数据来自豆瓣',
+                    left: 'center',
+                    textStyle:{
+                        //文字颜色
+                        color:'#ccc',
+                        //字体风格,'normal','italic','oblique'
+                        fontStyle:'normal',
+                        //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                        fontWeight:'bold',
+                        //字体系列
+                        fontFamily:'sans-serif',
+                        //字体大小
+                　　　　 fontSize:28
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        dataView: {show: true, readOnly: false},
+                        magicType: {show: true, type: ['line', 'bar']},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                // legend: {
+                //     // data: ['书籍数', '评价人数']
+                // },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: {{ book_socre }},
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '书籍数',
+                        min: 0,
+                        max: 50,
+                        interval: 10,
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '评价人数',
+                        interval: 600000,
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '书籍数',
+                        type: 'bar',
+                        data: {{ book_count }}
+                    },
+
+                    {
+                        name: '评价人数',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: {{ book_rated }}
+                    }
+                ]
+            };
+            bookChart.setOption(option);
+        </script>
+
+        <div>
+            <div style="color: #fffff1">
+                <p>数据预测</p>
+                电影评分: <input type="text" name="scory" value="" /></p>
+                评论人数: <input type="text" name="count" value="998" />  </p>
+                电影时长: <input type="text" name="time" value="130" />  </p>
+                <button id="do">立即预测</button>
+            <div/>
+            <div id="res">
+                <p></p>
+            </div>
+        </div>
+        
+
+        <script type="text/javascript">
+            <!--    公式    -->
+            let check_boxs = document.querySelectorAll('input')
+            let btn = document.querySelector('#do')
+            let res_dom = document.querySelector('#res')
+
+            btn.addEventListener('click', function() {
+                let a = check_boxs[0].value
+                let b = check_boxs[1].value
+                let c = check_boxs[2].value
+
+                // a = b / c
+                if(check_boxs[0].value==='') {
+                    a = b / c
+                    check_boxs[0].value = a
+                }
+                if(check_boxs[1].value==='') {
+                    b = a * c
+                    check_boxs[1].value = b
+                } 
+                if(check_boxs[2].value==='') {
+                    c = b / a
+                    check_boxs[2].value = c
+                }
+            }, false)
+        </script>
+
+    </div>
+</section>
+
+<a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="static/assets/vendor/jquery/jquery.min.js"></script>
+<script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="static/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+<script src="static/assets/vendor/php-email-form/validate.js"></script>
+<script src="static/assets/vendor/jquery-sticky/jquery.sticky.js"></script>
+<script src="static/assets/vendor/venobox/venobox.min.js"></script>
+<script src="static/assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+<script src="static/assets/vendor/counterup/counterup.min.js"></script>
+<script src="static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="static/assets/vendor/aos/aos.js"></script>
+
+<!-- Template Main JS File -->
+<script src="static/assets/js/main.js"></script>
+
+</body>
+
+</html>

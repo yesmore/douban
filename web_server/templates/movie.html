@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>豆瓣电影信息数据分析</title>
+  <meta content="" name="descriptison">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="static/assets/img/favicon.png" rel="icon">
+  <link href="static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/venobox/venobox.css" rel="stylesheet">
+  <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="static/assets/css/style.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Mamba - v2.0.1
+  * Template URL: https://bootstrapmade.com/mamba-one-page-bootstrap-template-free/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container">
+
+      <div class="logo float-left">
+        <h1 class="text-light"><a href="#"><span>数据分析</span></a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="temp.html"><img src="static/assets/img/logo.png" alt="" class="img-fluid"></a>-->
+      </div>
+
+      <nav class="nav-menu float-right d-none d-lg-block">
+        <ul>
+          <li class="active"><a href="/">总评</a></li>
+          <li><a href="/word">生成词云</a></li>
+          <li><a href="/movie">电影</a></li>
+          <li><a href="/book">图书</a></li>
+        </ul>
+      </nav><!-- .nav-menu -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Our Team Section ======= -->
+  <section id="team" class="team">
+    <div class="container">
+
+      <div class="section-title">
+        <h2>豆瓣电影详细数据</h2>
+      </div>
+      <section class="counts section-bg">
+        <div class="container">
+
+          <button>筛选：</button>
+          <select name="country" id="country">
+            <option value="导演">地区</option>
+            <option value="中国大陆">中国大陆</option>
+            <option value="中国香港">中国香港</option>
+            <option value="美国欧美">美国欧美</option>
+          </select>
+          <select name="cate" id="cate">
+            <option value="导演">分类</option>
+            <option value="喜剧">喜剧</option>
+            <option value="奇幻">奇幻</option>
+            <option value="爱情">爱情</option>
+            <option value="剧情">剧情</option>
+            <option value="冒险">冒险</option>
+            <option value="动作">动作</option>
+          </select>
+          <select name="score" id="score">
+            <option value="">评分</option>
+            <option value="9.5">9.5及以上</option>
+            <option value="9.2">9.2及以上</option>
+            <option value="9">9.0及以上</option>
+            <option value="9">8.8及以上</option>
+          </select>
+          <select name="comm" id="comm">
+            <option value="">评论数</option>
+            <option value="2000000">2000000及以上</option>
+            <option value="1500000">1500000及以上</option>
+            <option value="1000000">1000000及以上</option>
+            <option value="100000">100000及以上</option>
+            <option value="10000">10000以上</option>
+          </select>
+
+          <table border="2" class="table table-striped">
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section><!-- End Counts Section -->
+
+      <div>
+        <span id="dataSrc" d="{{movies}}" style="display:none"></span>
+      </div>
+
+      <script>
+        let choose_ctr = document.querySelector('#country')
+        let choose_score = document.querySelector('#score')
+        let choose_comm = document.querySelector('#comm')
+        let choose_cate = document.querySelector('#cate')
+
+        let thead = document.querySelector('#thead')
+        let tbody = document.querySelector('#tbody')
+        let js_data = document.querySelector('#dataSrc').getAttribute('d');
+
+        regex = /\[(.+?)\]/g;
+        let _buff = js_data.match(regex)
+        _buff[0] = _buff[0].substring(1, _buff[0].length - 1)
+        for(let i=0; i<_buff.length; i++ ) {
+          _buff[i] = _buff[i].substring(1, _buff[i].length - 1).split("', '")
+          _buff[i][0] = _buff[i][0].split(', ')
+          _buff[i][3] = _buff[i][3].split(', ')
+        }
+
+        choose_ctr.addEventListener('change', function() {
+          console.log(choose_ctr.value)
+          let new_buff = []
+          _buff.map(function(item, index) {
+            console.log(Number(item[3][1]), Number(choose_score.value))
+
+            if(item && item[4] &&
+               item[4].indexOf(choose_ctr.value) !== -1 ) {
+              new_buff.push(item)
+            }
+          })
+
+          render_html(new_buff)
+        }, false)
+
+        choose_cate.addEventListener('change', function() {
+          let new_buff = []
+          _buff.map(function(item, index) {
+            console.log(Number(item[3][1]), Number(choose_cate.value))
+
+            if(item && item[4] &&
+               item[4].indexOf(choose_cate.value) !== -1 ) {
+              new_buff.push(item)
+            }
+          })
+
+          render_html(new_buff)
+        }, false)
+
+        choose_score.addEventListener('change', function() {
+          let new_buff = []
+          _buff.map(function(item, index) {
+            if(item && item[3] && Number(item[3][1]) >= Number(choose_score.value) ) {
+              new_buff.push(item)
+            }
+          })
+
+          render_html(new_buff)
+        }, false)
+
+        choose_comm.addEventListener('change', function() {
+
+          let new_buff = []
+          _buff.map(function(item, index) {
+           console.log(item[3][2], choose_comm.value)
+            if(item && item[3] && Number(item[3][2]) >= Number(choose_comm.value) ) {
+              new_buff.push(item)
+            }
+          })
+
+          render_html(new_buff)
+        }, false)
+
+        render_html(_buff)
+
+        function render_html(_buffs) {
+          let tHeadHtml = `<tr>
+              <th>排名</th>
+              <th>名称</th>
+              <th>评分</th>
+              <th>评论数</th>
+              <th>概述</th>
+              <th>其他</th>
+            </tr>`
+          thead.innerHTML = tHeadHtml
+
+          let tbodyHtml = ''
+          for(let i=0; i<_buffs.length; i++ ) {
+            if(_buffs[i] && _buffs[i][2] && _buffs[i][3] && _buffs[i][4]) {
+              tbodyHtml += '<tr>'
+
+              tbodyHtml += `<td>${_buffs[i][0][0]}</td>
+                            <td>${_buffs[i][2].slice(0, 6)}</td>
+                            <td>${_buffs[i][3][1]}</td>
+                            <td>${_buffs[i][3][2]}</td>
+                            <td>${_buffs[i][3][3]}</td>
+                            <td>${_buffs[i][4]}</td>
+              `
+
+              tbodyHtml += "</tr>"
+              tbody.innerHTML = tbodyHtml
+            }
+
+          }
+        }
+        console.log(_buff)
+
+      </script>
+
+    </div>
+  </section><!-- End Our Team Section -->
+
+
+  <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+  <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+  <script src="static/assets/vendor/php-email-form/validate.js"></script>
+  <script src="static/assets/vendor/jquery-sticky/jquery.sticky.js"></script>
+  <script src="static/assets/vendor/venobox/venobox.min.js"></script>
+  <script src="static/assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+  <script src="static/assets/vendor/counterup/counterup.min.js"></script>
+  <script src="static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="static/assets/vendor/aos/aos.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="static/assets/js/main.js"></script>
+
+</body>
+
+</html>
